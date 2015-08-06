@@ -21,6 +21,10 @@ abstract class Postac {
     protected $param;
     public $zycie;
 
+    /**
+     * Konstruktor pobiera parametry postaci
+     * @param type $param
+     */
     public function __construct($param) {
         $this->param = new \Parameters();
         $this->param->setStringParameter($param);
@@ -29,22 +33,37 @@ abstract class Postac {
 
     public abstract function getName();
 
+    /**
+     * Wykonuje atak i sprawdza czy skuteczny
+     * @param \Postac\Postac $postac
+     */
     public function wykonajAtak(Postac $postac) {
         if ($this->czyAtakSkutecznoy($postac)) {
             $this->odbierzPunkt($postac);
         }
     }
 
+    /**
+     * Odbiera punkty postaci wywoływana przez wykonajAtak
+     * @param \Postac\Postac $postac
+     */
+    private function odbierzPunkt(Postac $postac) {
+        $postac->Getparam()->setZycie($postac->Getparam()->getZycie()-1);
+    }
+
+    /**
+     * Oblicza czy atak jest skuteczny wdl wzoru podanego
+     * @param \Postac\Postac $postac
+     * @return boolean
+     */
     private function czyAtakSkutecznoy(Postac $postac) {
         $skutecznosc = $this->param->getZrecznosc() - $postac->getzrecznosc() * 100;
         $skutecznosc /= ($postac->getzrecznosc() * 100);
 
         if ($skutecznosc < 10) {
             $skutecznosc = 10;
-
         } elseif ($skutecznosc > 90) {
             $skutecznosc = 90;
-
         }
 
         if (rand(1, 100) >= $skutecznosc) {
@@ -55,30 +74,36 @@ abstract class Postac {
         return false;
     }
 
-    public function jedz() {
-        return "Czas na jedzenie";
-    }
-
+    /**
+     * Zwraca wartość parametru zycie
+     * @return type
+     */
     public function getZycie() {
         return $this->zycie;
     }
 
+    /**
+     * Ustawia wartośc parametru życie
+     * @param type $value
+     */
     protected function setZycie($value) {
         $this->param->setZycie($value);
     }
 
+    /**
+     * Zwraca wartość parametru zręczność
+     * @return type
+     */
     public function getzrecznosc() {
         return $this->param->getZrecznosc();
     }
 
-    private function odbierzPunkt(Postac $postac) {
-        $postac->zycie = $postac->zycie - 1;
+    /**
+     * Zwraca obiekt Parameters
+     * @return type
+     */
+    public function Getparam() {
+        return $this->param;
     }
-
-public function Getparam(){
-    return $this->param;
-
-}
-
 
 }

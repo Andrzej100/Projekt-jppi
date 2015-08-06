@@ -7,7 +7,11 @@
  */
 class Game {
 
-
+    /**
+     * Podaje tekst do wyświetlenia na ekranie konsoli
+     * @param type $param
+     * @return string
+     */
     public function tekst($param) {
         switch ($param) {
             case 1:
@@ -34,6 +38,9 @@ class Game {
         return $msg;
     }
 
+    /**
+     * Obsługa głównego wątku gry
+     */
     public function start() {
 
         $tura = new Tura();
@@ -44,23 +51,12 @@ class Game {
 
         Console::write($this->tekst(2));
         $tura->dodajPrzeciwnika(new Postac\Potwor(Console::read()));
-        do{
+        do {
             Console::write($this->tekst(3));
             $tura->aktywne();
             $x = Console::read();
             $tura->akcja($x);
-            
-            
-        }while($tura->sprawdzCzyKoniec());
-
+        } while ($tura->sprawdzCzyKoniec());
     }
-
-
-    private function wiadomosc(Postac\Postac $postac) {
-
-        var_dump($postac);
-    }
-
-
 
 }
