@@ -20,6 +20,7 @@ abstract class Postac {
      */
     protected $param;
     public $zycie;
+    public $name;
 
     /**
      * Konstruktor pobiera parametry postaci
@@ -29,8 +30,12 @@ abstract class Postac {
         $this->param = new \Parameters();
         $this->param->setStringParameter($param);
         $this->zycie = $this->param->getZycie();
+        $this->setName($param[name]);
     }
 
+    public function setName($name){
+        $this->name=$name;
+    }
     public abstract function getName();
 
     /**

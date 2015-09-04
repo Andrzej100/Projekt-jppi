@@ -26,51 +26,16 @@ class Parameters {
      */
     public function setStringParameter($string) {
 
-        $p = $this->checkparameter($string);
-
-        $this->setSzybkosc($p[0]);
-        $this->setSila($p[1]);
-        $this->setZrecznosc($p[2]);
-        $this->setZycie($p[3]);
+        $this->setSzybkosc($string[0][2]);
+        $this->setSila($string[0][3]);
+        $this->setZrecznosc($string[0][4]);
+        $this->setZycie($string[0][5]);
     }
-
-    /**
-     * Rozdziela poszcególne parametry i wpisuje do atblicy
-     * Sprawdza poprawność wpisanych parametrów
-     * @param type $parametr
-     * @return type
-     * @throws Exception
-     */
-    private function checkparameter($parametr) {
-        if (strlen($parametr) > 4) {
-            throw new Exception("Error: za dużo parametrów");
-        }
-        if (strlen($parametr) < 4) {
-            throw new Exception("Error: za mało parametrów");
-        }
-
-        $explodeParamerter = str_split($parametr);
-
-        foreach ($explodeParamerter as $e) {
-
-            $this->checkIsString($e);
-        }
-
-        return $explodeParamerter;
-    }
-
-    /**
-     * Sprawdza czy poszczególny parametr jest typu numerycznego czy string
-     * @param type $param
-     * @throws Exception
-     */
-    public function checkIsString($param) {
-        if (!is_numeric($param)) {
-//            echo 'string';
-            throw new Exception("Error: musi być liczba");
-        }
-    }
-
+     
+    
+    
+    
+    
     /**
      * Ustawia wartsośc parametru szybkość
      * @param type $value

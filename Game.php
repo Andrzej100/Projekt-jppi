@@ -5,7 +5,7 @@
  *
  * @author piotr.switala <piotr.switala@powiat.poznan.pl>
  */
-class Game {
+class Game extends request {
 
     /**
      * Podaje tekst do wyświetlenia na ekranie konsoli
@@ -47,10 +47,10 @@ class Game {
 
 
         Console::write($this->tekst(1));
-        $tura->dodajGracza(new Postac\Wiedzmin(Console::read()));
+        $tura->dodajGracza(new Postac\Wiedzmin($this->getsession('result')));
 
-        Console::write($this->tekst(2));
-        $tura->dodajPrzeciwnika(new Postac\Potwor(Console::read()));
+        $tura->dodajPrzeciwnika(new Postac\Potwor($this->getsession('result')));
+       
         do {
             Console::write($this->tekst(3));
             $tura->aktywne();

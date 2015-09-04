@@ -20,4 +20,16 @@ class request {
     public function getsession($filter){
         return filter_input(INPUT_SESSION,$filter);
     }
+    
+    public function setsession(array $filter){
+        $_SESSION = $filter;
+    }
+    
+    public function addsession( $key, $value){
+        $_SESSION[$key] = $value;
+    }
+    
+    
+   
+    
 }
