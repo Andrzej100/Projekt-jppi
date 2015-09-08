@@ -33,6 +33,15 @@ class sesja extends request {
               </form>';
          return $this->formularz;
     }
+    public function formularz2(){
+       
+    for($i=0; $i<count($this->result); $i++){
+        $postac+='<label><input type="hidden" name="nazwa" value='+$this->result[$i][nazwa]+' />'
+                +$this->result[$i][nazwa]+'</label><label>'+$this->result[$i][poziom]+
+                '<input type="button" vlaue="wybierz">';
+    }
+    $this->formularz='<form action="index.php" method="POST">'+$postac;
+    }
     
      public function rejestracja(){
         if( $this->getpost('login')  &&  $this->getpost('haslo') ) {
@@ -41,15 +50,17 @@ class sesja extends request {
            $this->db=bazadanych::getInstance();
            $sql="insert into user ('user_name', 'user_password', 'sila', 'zrecznosc','szybkosc','zycie') values (:login, :haslo,:sila,:zrecznosc,:szybkosc,:zycie)";
            $query=$this->db -> getConnection() -> prepare($sql);
-           $this->result -> execute(array(":login" => $user_name, ":haslo" => $user_password, ":sila" => $sila, ":zrecznosc" => $zrecznosc,":szybkosc"=>$szybkosc,":zycie"=>$zycie));
+           $this->result-> execute(array(":login" => $user_name, ":haslo" => $user_password, ":sila" => $sila, ":zrecznosc" => $zrecznosc,":szybkosc"=>$szybkosc,":zycie"=>$zycie));
            }
     }
     public function login(){
         $login = filter_input(INPUT_POST, 'login');
+        
         $data = $_POST['data'];
         
          if( $this->getpost('login')  &&  $this->getpost('haslo') ) {
         $login=$this->getpost('login');
+        $this->login=$login;
         $haslo=$this->getpost('haslo');
         $this->db=bazadanych::getInstance();
         $sql= "select * from user where 'user_name' = $login AND 'user_password'= $haslo";
@@ -62,6 +73,27 @@ class sesja extends request {
         }
          else{
          return false;
+    }
+}
+public function wybierzpostac(){
+   if(!isset($this->getpost('wybierz'))){
+    $this->db=bazadanych::getInstance();
+    $login=$this->login;
+    $sql= "select * from postac where 'user_name' = $login";
+    $query = $this->db -> getConnection() -> prepare($sql);
+    $query -> execute(array($user_name));
+    $this->result = $query -> fetchAll();
+    $this->formularz2();
+   }
+    if(isset($this->getpost('wybierz'))){
+    $this->db=bazadanych::getInstance();
+    $login=$this->login;
+    $nazwa=$this->getpost('nazwa');
+    $sql= "select * from postac where 'nazwa' = $nazwa AND 'user_name'=$login";
+    $query = $this->db -> getConnection() -> prepare($sql);
+    $query -> execute(array($nazwa,$user_name));
+    $this->result = $query -> fetchAll();
+    return $this->result;
     }
 }
   public function start(){
