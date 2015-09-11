@@ -109,10 +109,51 @@ class Wiedzmin extends Postac {
 
     /**
      * Zwraca imie postaci
-     * @return string
+     * @return string  
      */
     public function getName() {
         return 'jestem Wiedzmin';
     }
+    public function getGold(){
+        $this->db=bazadanych::getInstance();
+        $bohater_id=$this->bohater_id;
+        $sql= "select * from bohater where 'bohater_id' = $bohater_id";
+        $query = $this->db -> prepare($sql);
+        $query -> execute(array($bohater_id));
+        $result = $query -> fetchAll();
+        return $result[0][gold];
+    }
 
+    public function setGold($gold){
+     $this->db=bazadanych::getInstance();
+     $bohater_id=$this->bohater_id;
+     $sql="UPDATE poziom SET gold=:gold WHERE bohater_id=:bohater_id";
+     $query= $query = $this->db -> prepare($sql);
+     $query -> execute(array($gold,$bohater_id));
+    }
+    public function aktywnyEkwipunek(){
+        if (isset($this->getpost('wyposaz'))) {
+            if ($this->ekwipunek[0][typ] == 'bron') {
+                $this->bron = new Bron($this->ekwipunek[0][nazwa],$this->ekwipunek[0][param1],$this->ekwipunek[0][param2]);
+            }
+            if ($this->ekwipunek[0][typ] == 'zbroja') {
+                $this->zbroja = new Zbroja($this->ekwipunek[0][nazwa],$this->ekwipunek[0][param1],$this->ekwipunek[0][param2]);
+            }
+        }
+    }
+   public function pokazEkwipunek(){
+     $this->db=bazadanych::getInstance();
+         $sql= "select * from ekwipunek";
+         $query = $this->db -> getConnection() -> prepare($sql);
+         $query -> execute();
+         $ekwipunek = $query -> fetchAll();
+         
+  }
+  public function getEkwipunek(){
+       $this->db=bazadanych::getInstance();
+         $sql= "select * from ekwipunek";
+         $query = $this->db -> getConnection() -> prepare($sql);
+         $query -> execute();
+         $this->ekwipunek = $query -> fetchAll();
+  }
 }
