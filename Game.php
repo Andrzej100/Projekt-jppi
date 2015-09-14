@@ -7,6 +7,7 @@
  */
 class Game extends request {
 
+ 
     /**
      * Podaje tekst do wyświetlenia na ekranie konsoli
      * @param type $param
