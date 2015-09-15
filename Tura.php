@@ -24,6 +24,14 @@ class Tura {
      * Dodaje gracza do obiektu Tura
      * @param Postac\Wiedzmin $wiedzmin
      */
+    private $punktyprzeciwnik=0;
+    
+    private $punktygracz=0;
+    
+    private $kolejg;
+    
+    private $kolejp;
+    
     public function dodajGracza(Postac\Wiedzmin $wiedzmin) {
         $this->gracz = $wiedzmin;
     }
@@ -61,28 +69,16 @@ class Tura {
     }
 
     /**
-     * Wyświetla parametry Gracza
-     * @param Postac\Postac $postac
-     */
-    private function wiadomosc(Postac\Postac $postac) {
-
-        Console::write($postac->Getparam()->getSzybkosc());
-        Console::write($postac->Getparam()->getSila());
-        Console::write($postac->Getparam()->getZrecznosc());
-        Console::write($postac->Getparam()->getZycie());
-    }
-
-    /**
      * Wywołuje truę przeciwnika
      * Wywołuje funkcję wiadomość oraz czas_trwania
      */
     public function tura_przeciwnika() {
-        for ($i = 0; $i < $this->przeciwnik->Getparam()->getpktakcji(); $i++) {
-            Console::write("atak przeciwnika");
-            $this->przeciwnik->wykonajAtak($this->gracz);
-            $this->gracz->czas_trwania();
-            $this->wiadomosc($this->gracz);
+        do{
+            $this->punktyprzeciwnik--;
+            return $this->przeciwnik->wykonajAtak($this->gracz);
         }
+        while( $this->punktyprzeciwnik==0);
+        
     }
 
     /**
@@ -91,11 +87,23 @@ class Tura {
      * @param type $opcja
      */
     public function akcja($opcja) {
-        for ($i = 0; $i < $this->gracz->Getparam()->getpktakcji(); $i++) {
-            $this->opcja($opcja);
+        if($opcja!=null && $this->kolejg==true){
+            $this->kolejp=true;
+            return $this->opcja($opcja);
         }
-
-        $this->tura_przeciwnika();
+        elseif($this->punktyprzeciwnik>0 && $this->kolejp==true){
+        $this->kolejg=true;
+        return $this->tura_przeciwnika();
+        }
+        elseif($this->punktyprzeciwnik>0 && $this->kolejp==true){
+            return $this->wyborruchu();
+        }
+        else{
+            $this->aktywne();
+            $this->czyjatura();
+            $this->gracz->czas_trwania();
+            return $this->wyborruchu();
+        }
     }
 
     /**
@@ -105,20 +113,22 @@ class Tura {
     public function opcja($opcja) {
         switch ($opcja) {
             case "a":
-
-                $this->gracz->wykonajAtak($this->przeciwnik);
-                break;
+            
+                $this->punktygracz--;
+                return $this->gracz->wykonajAtak($this->przeciwnik);
+                
             case "b":
-                Console::write("Podaj poziom Eliksiru");
-                $this->gracz->utworz_eliksir();
-                break;
-            case "c":
-                $this->gracz->wypij();
-                break;
+                $this->punktygracz--;
+                return $this->gracz->utworz_eliksir();
+            
+                case "c":
+                $this->punktygracz--;
+                return $this->gracz->wypij();
+                
             case "d":
-                $this->gracz->wykonajObrone();
-                break;
-
+                 $this->punktygracz--;
+               return  $this->gracz->wykonajObrone();
+               
             default:
                 //                exit();
                 break;
@@ -152,5 +162,48 @@ class Tura {
 
         return $punkty;
     }
+public function losowy(){
+    $losowy=random(0,1);
+    if($losowy==0){
+        $this->kolejg=true; $this->koljep=false;
+    }
+    else{
+        $this->kolejp=true; $this->kolejg=false;
+        }
+    }
 
+    public function czyjatura(){
+        $this->punktygracz=$this->gracz->Getparam()->getpktakcji();
+        $this->punktyprzeciwnik=$this->przeciwnik->Getparam()->getpktakcji();
+        if($this->punktygracz>punktyprzeciwnik){
+            $this->kolejg=true; $this->koljep=false;
+        }
+        elseif($this->punktygracz<punktyprzeciwnik){
+            $this->kolejp=true; $this->kolejg=false;
+        }
+        elseif($this->punktygracz==punktyprzeciwnik){
+            $this->losowy();
+        }
+    }
+    public function wyborruchu(){
+        if($this->kolejg==true){
+        return  '<form action="index.php" method="POST>
+                  <select name="akcja">
+                    <option value="a">Atak</option>
+                    <option value="b">Stworzenie Eiksiru</option>
+                    <option value="c">Wypicie Eliksiru</option>
+                    <option value="d">Obrona</option>
+                    <option value="null">Koniec Tury</option>
+                    </select>
+                    <input type="submit" value="Wybierz akcje">
+              </form>';
+        }
+    }
+    public function utwurzeliksirform(){
+        return  '<form action="index.php" method="POST>
+                 
+                  
+                    <input type="submit" value="Wybierz akcje">
+              </form>';
+    }
 }

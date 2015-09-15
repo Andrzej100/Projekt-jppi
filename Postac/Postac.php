@@ -22,16 +22,8 @@ abstract class Postac {
     public $zycie;
     public $name;
 
-    /**
-     * Konstruktor pobiera parametry postaci
-     * @param type $param
-     */
-    public function __construct($param) {
-        $this->param = new \Parameters();
-        $this->param->setStringParameter($param);
-        $this->zycie = $this->param->getZycie();
-        $this->setName($param[name]);
-    }
+    
+     
 
     public function setName($name){
         $this->name=$name;
@@ -45,6 +37,7 @@ abstract class Postac {
     public function wykonajAtak(Postac $postac) {
         if ($this->czyAtakSkutecznoy($postac)) {
             $this->odbierzPunkt($postac);
+            return "Atak Skuteczny";
         }
     }
 

@@ -26,7 +26,9 @@ class sesja extends request {
    
     
     public function formylarz($typ){
-        $this->formularz='<form action="index.php" method="POST"> 
+               
+        $this->formularz='<form action="index.php" method="POST">
+               <input type="hidden" name="'+$typ+'" value="true"/>
                <input type="text" name="login"/>
                <input type="password" name="haslo">
                <input type="button" vlaue="$typ"> 
@@ -34,13 +36,13 @@ class sesja extends request {
          return $this->formularz;
     }
     public function formularz2(){
-       
     for($i=0; $i<count($this->result); $i++){
         $postac+='<label><input type="hidden" name="nazwa" value='+$this->result[$i][nazwa]+' />'
                 +$this->result[$i][nazwa]+'</label><label>'+$this->result[$i][poziom]+
-                '<input type="button" vlaue="wybierz">';
+                '<input type="submit" vlaue="wybierz">';
     }
     $this->formularz='<form action="index.php" method="POST">'+$postac;
+    return $this->formularz;
     }
     
      public function rejestracja(){
@@ -51,7 +53,9 @@ class sesja extends request {
            $sql="insert into user ('user_name', 'user_password', 'sila', 'zrecznosc','szybkosc','zycie') values (:login, :haslo,:sila,:zrecznosc,:szybkosc,:zycie)";
            $query=$this->db -> getConnection() -> prepare($sql);
            $this->result-> execute(array(":login" => $user_name, ":haslo" => $user_password, ":sila" => $sila, ":zrecznosc" => $zrecznosc,":szybkosc"=>$szybkosc,":zycie"=>$zycie));
+           return true;
            }
+           return false;
     }
     public function login(){
         $login = filter_input(INPUT_POST, 'login');
@@ -70,21 +74,24 @@ class sesja extends request {
         if($this->result){
             $this->start;
             $this->getsession('result')=$this->result;
+            return true;
         }
          else{
          return false;
     }
 }
 public function wybierzpostac(){
-   if(!isset($this->getpost('wybierz'))){
     $this->db=bazadanych::getInstance();
     $login=$this->login;
     $sql= "select * from postac where 'user_name' = $login";
     $query = $this->db -> getConnection() -> prepare($sql);
     $query -> execute(array($user_name));
+    $this->result='';
     $this->result = $query -> fetchAll();
     $this->formularz2();
-   }
+   
+}
+public function wyborpostaci(){
     if(isset($this->getpost('wybierz'))){
     $this->db=bazadanych::getInstance();
     $login=$this->login;
@@ -93,9 +100,11 @@ public function wybierzpostac(){
     $query = $this->db -> getConnection() -> prepare($sql);
     $query -> execute(array($nazwa,$user_name));
     $this->result = $query -> fetchAll();
+    $this->getsession('postac')=$this->result;
     return $this->result;
     }
 }
+
   public function start(){
       session_start();
   }

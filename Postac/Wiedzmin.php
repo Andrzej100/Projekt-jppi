@@ -20,13 +20,21 @@ class Wiedzmin extends Postac {
      * @return boolean
      * 
      */
+    public function __construct($param) {
+        $this->param = new \Parameters();
+        $this->param->setStringParameter($param);
+        $this->zycie = $this->param->getZycie();
+        $this->setName($param[0][name]);
+    }
+    
+    
     public function wykonajObrone() {
         $dodaj = ($this->param->getZrecznosc() / 2); //50%
 
         $this->param->setZrecznosc($this->param->getZrecznosc() + $dodaj);
         $this->aktywnaObrona = true;
 
-        return true;
+        return "Obrona";
     }
 
     /**
@@ -50,9 +58,10 @@ class Wiedzmin extends Postac {
      */
     public function utworz_eliksir() {
         if ($this->iloscElixir > 0) {
-            $poziom = \Console::read();
+            $poziom=rand(1,3);
             $this->eliksir = new \Eliksir($this, $poziom);
             $this->iloscElixir--;
+            return "Eliksir Zostal utworzony";
         }
     }
 
@@ -78,21 +87,20 @@ class Wiedzmin extends Postac {
                 $this->eliksir->zycie();
                 $this->czas_trwania();
                 $this->wypij = true;
-                break;
+                return "wypito eliksir zycie";
             case 2:
                 $this->eliksir->sila();
                 $this->czas_trwania();
                 $this->wypij = true;
-                break;
+                return "wypitio eliksir sila";
             case 3:
                 $this->eliksir->szybkosc();
                 $this->czas_trwania();
                 $this->wypij = true;
-                break;
+                return "wypito eliksir szybkosc";
 
             default:
-                \Console::write("Podaj z przedzialu 1-3");
-                break;
+               return "Podaj z przedzialu 1-3";
         }
     }
 
@@ -131,8 +139,9 @@ class Wiedzmin extends Postac {
      $query= $query = $this->db -> prepare($sql);
      $query -> execute(array($gold,$bohater_id));
     }
-    public function aktywnyEkwipunek(){
-        if (isset($this->getpost('wyposaz'))) {
+    
+    public function aktywnyEkwipunek($bron){
+      
             if ($this->ekwipunek[0][typ] == 'bron') {
                 $this->bron = new Bron($this->ekwipunek[0][nazwa],$this->ekwipunek[0][param1],$this->ekwipunek[0][param2]);
             }
@@ -140,20 +149,5 @@ class Wiedzmin extends Postac {
                 $this->zbroja = new Zbroja($this->ekwipunek[0][nazwa],$this->ekwipunek[0][param1],$this->ekwipunek[0][param2]);
             }
         }
-    }
-   public function pokazEkwipunek(){
-     $this->db=bazadanych::getInstance();
-         $sql= "select * from ekwipunek";
-         $query = $this->db -> getConnection() -> prepare($sql);
-         $query -> execute();
-         $ekwipunek = $query -> fetchAll();
-         
-  }
-  public function getEkwipunek(){
-       $this->db=bazadanych::getInstance();
-         $sql= "select * from ekwipunek";
-         $query = $this->db -> getConnection() -> prepare($sql);
-         $query -> execute();
-         $this->ekwipunek = $query -> fetchAll();
-  }
+    
 }

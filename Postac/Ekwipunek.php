@@ -19,10 +19,12 @@ class Ekwipunek {
     private $zbroja;
     private $db;
     private $result;
+    private $bohater_id;
 
-    public function __construct($aktywne) {
+    public function __construct($aktywne,$bohater_id) {
 
-        $this->aktywne($aktywne);
+        $this->aktywne=$aktywne;
+        $this->bohater_id=$bohater_id;
     }
 
     public function dodajdo_ekwipunku($przedmiot,$name){
@@ -37,25 +39,28 @@ class Ekwipunek {
          $this->result-> execute(array(":name" => $user_name, ":nazwa" => $nazwa, ":typ" => $typ, ":param1" => $param1, ":param2"=>$param2, ":cena"=>$cena));
     }
     
-    public function aktywne() {
-        if (isset($this->getpost('wyposaz'))) {
-            if ($this->ekwipunek[0][typ] == 'bron') {
-                $this->bron = new Bron($this->ekwipunek[0][nazwa],$this->ekwipunek[0][param1],$this->ekwipunek[0][param2]);
-            }
-            if ($this->ekwipunek[0][typ] == 'zbroja') {
-                $this->zbroja = new Zbroja($this->ekwipunek[0][nazwa],$this->ekwipunek[0][param1],$this->ekwipunek[0][param2]);
-            }
-        }
-    }
+    
 
-    public function showekwipunek($ekwipunek) {
-        if ($ekwipunek != null) {
+    public function showekwipunek() {
+        if ($this->ekwipunek != null) {
             for ($i = 0; $i < count($ekwipunek); $i++) {
-                $ekwipunek +='<form action="index.php" method="POST">'+$this->ekwipunek[$i][name] + ' '
-                + $ekwipunek[$i][param1] +' '+$ekwipunek[$i][param2]+'<input type="button" value="wyposaz"/>'+ '/n';
+                $wynik +='<form action="index.php" method="POST">'+$this->ekwipunek[$i][name] + ' '
+                + $ekwipunek[$i][param1] +' '+$ekwipunek[$i][param2]+'<input type="hidden" name="idbroni" value='+$this->ekwipunek[$i][id]+'/>'+
+        '<input type="submit" value="wyposaz"/>'+ '/n';
             }
         }
+         return $wynik;
     }
+    public function getbron($id){
+         for ($i = 0; $i < count($ekwipunek); $i++) {
+             if($this->ekwipunek[$i][id]==$id){
+             $wynik=$this->ekwipunek[$i];
+          }  
+          return $wynik;
+       }
+    }
+    
+    
     public function getekwpunek(){
          $this->db=bazadanych::getInstance();
          $sql= "select * from ekwipunek";

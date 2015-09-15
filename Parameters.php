@@ -26,10 +26,11 @@ class Parameters {
      */
     public function setStringParameter($string) {
 
-        $this->setSzybkosc($string[0][2]);
-        $this->setSila($string[0][3]);
-        $this->setZrecznosc($string[0][4]);
-        $this->setZycie($string[0][5]);
+        $this->setSzybkosc($string[0]['szybkosc']);
+        $this->setSila($string[0]['sila']);
+        $this->setZrecznosc($string[0]['zrecznosc']);
+        $this->setZycie($string[0]['zycie']);
+        
     }
      
     

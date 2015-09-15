@@ -9,9 +9,21 @@
 /**
  * Description of Serializacja
  *
- * @author andrzej.mroczek
+ * @author Andrzej
  */
 class Serializacja {
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ * Description of Serializacja
+ *
+ * @author andrzej.mroczek
+ */
+
     
     private $sreialized;
     
@@ -49,5 +61,6 @@ public function getObject($name){
  
     $name=unserialize($this->unserialized[0]['serialized']);
           return $name;  
-        }
+        
  }
+}
