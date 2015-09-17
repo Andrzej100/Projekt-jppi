@@ -24,21 +24,9 @@ class Serializacja {
  * @author andrzej.mroczek
  */
 
-    
-    private $sreialized;
-    
-    private $name;
-    
-    private $unserialized;
-    
- public function serialize($object,$name){
-    $serializing=serialize($object);
-    $this->name=$name;
-    $this->serialized=$serializing;
-}
-public function serialized($user_id, $update = false){
-    $name=$this->name;
-    $serialized=$this->serialized;
+public static function serialize($nazwa,$object,$user_id, $update = false){
+    $name=$nazwa;
+    $serialized=serialize($object);
     $this->db=bazadanych::getInstance();
     if($update == false) {
         $sql="insert into serializacja ('user_id', 'serialized','name') values (:user_id, :serialized, :name)";
@@ -51,16 +39,13 @@ public function serialized($user_id, $update = false){
         $query -> execute(array($serialized,$name,$user_id));
     }
 }
-public function unserialize($user_id,$name){
+public static function unserialize($user_id,$name){
     $sql= "select * from serializacja where 'user_id' = $user_id AND 'name'=$name";
     $query = $this->db -> prepare($sql);
     $query -> execute(array($user_id,$name));
-    $this->unserialized = $query -> fetchAll();
+    $unserialized = $query -> fetchAll();
+    $object=unserialize($unserialized[0]['serialized']);
+          return $object;  
 }
-public function getObject($name){
- 
-    $name=unserialize($this->unserialized[0]['serialized']);
-          return $name;  
-        
- }
+
 }

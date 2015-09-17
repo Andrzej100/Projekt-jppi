@@ -11,7 +11,7 @@
  *
  * @author andrzej.mroczek
  */
-class sesja extends request {
+class ladowanie__old extends request {
     
     
     private $login;
@@ -72,8 +72,9 @@ class sesja extends request {
         $query -> execute(array($user_name,$user_password)); 
         $this->result = $query -> fetchAll();}
         if($this->result){
-            $this->start;
+            session_start();
             $this->getsession('result')=$this->result;
+            $_SESSION['user_id']=$this->result[0]['id'];
             return true;
         }
          else{
@@ -104,13 +105,27 @@ public function wyborpostaci(){
     return $this->result;
     }
 }
-
-  public function start(){
-      session_start();
-  }
   public function logout(){
       session_unset();
       session_destroy(); 
   }
-  
+  public function wybor(){
+      return  '<form action="index.php" method="POST"> 
+               <input type="hidden" name="rejestracja" value="true"/>
+               <input type="submit" vlaue="rejsetracja"> 
+              </form>
+        <form action="index.php" method="POST"> 
+               <input type="hidden" name="logowanie" value="true"/>
+               <input type="submit" vlaue="logowanie"> 
+              </form>';
+    }
+     public function wyborakcji() {
+       
+        return  '<form action="index.php" method="POST>
+               <input type="submit" vlaue="Wybierz Ekwipunek">
+               <input type="submit" vlaue="Statystyki">
+               <input type="submit" vlaue="Wybierz Przeciwnika"> 
+               <input type="submit" vlaue="Wejdź do sklepu"> 
+              </form>';
+    }
 }

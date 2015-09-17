@@ -12,6 +12,7 @@
  * @author andrzej.mroczek
  */
 class Sklep {
+    
     private $wyswietl;
     
     private $przedmioty;
@@ -26,75 +27,84 @@ class Sklep {
    
     private $zaznaczone;
     
-    private $result;
-    
     private $posiadane;
     
-   public function obsluga($przedmioty,$transakcja,Postac\Wiedzmin $wiedzmin){
-       if($przedmioty==null){
-       $sql= "select * from ekwipunek";
-       $query = $this->db -> prepare($sql);
-       $query -> execute();
-       $this->wynik=$query -> fetchAll();
-       }else{
-       $this->wynik=$przedmioty;
+    private $ekwipunek;
+    
+    private $transakcja;
+    
+    public function __construct(Postac\Wiedzmin $wiedzmin){
+        $this->wiedzmin=$wiedzmin;
+        $this->ekwipunek=$this->wiedzmin->getekwipunek();
+    }
+    
+   public function obsluga($transakcja){
+       $this->db=$this->db=bazadanych::getInstance();
+       $this->transakcja=$transakcja;
+       if($this->transakcja=="sprzedaz"){
+       $this->wynik=$this->ekwipunek;
+       }elseif($this->transakcja=="kupno"){
+       $this->wynik=$this->getPrzedmioty();
        }
-       $this->wiedzmin=$wiedzmin;
-       $this->transakcja();
-       for($i=0; $i<count($przedmioty); $i++){
-       $this->przedmioty+= '<input type="checkbox" name="zaznaczone[]" value='.$przedmioty[$i]['nazwa'].'>'+$przedmioty[$i]['nazwa']+$przedmioty[$i]['param']+
-                           $przedmioty[$i][cena]+'<input type="button" value='.$transakcja.'>'; 
+       for($i=0; $i<count($this->wynik); $i++){
+       $this->przedmioty+= '<input type="checkbox" name="zaznaczone[]" value='.$this->wynik[$i]['id'].'>'+$this->wynik[$i]['nazwa']+$this->wynik[$i]['param']+
+                           $this->wynik[$i][cena]+'<input type="submit" value='+$transakcja+'>'; 
        }
      
      $this->wiedzmininfo=$this->wiedzmin->getGold+$this->wiedzmin->getName();
      $this->wyswietl=$this->wiedzmininfo+'<form action="index.php" method="POST">'+$this->przedmioty;
-     
+     return $this->wyswietl;
 }
-public function transakcja(){
-    if($this->getpost('submit')=="kupno"){
+public function transakcja($transakcja){
+    $this->db=$this->db=bazadanych::getInstance();
+    if($transakcja=="kupno"){
         $zloto=$this->potrzebnezloto();
         if($this->wiedzmin->getgold()>$zloto){
-         $this->db=$this->db=bazadanych::getInstance();
          $this->nieposiadanerzeczy();
          $this->kupno();
          $this->wiedzmin->setGold($this->wiedzmin->getgold-$zloto);
+         return"zakupiono przedmioty";
+     }
+     else{
+         return "Nie masz wystarczajaco pieniendzy";
      }
    }
-    elseif($this->getpost('submit')=="sprzedaz"){
+    elseif($transakcja=="sprzedaz"){
         $zloto=$this->potrzebnezloto();
-        $this->db=$this->db=bazadanych::getInstance();
         $this->sprzedarz();
         $this->wiedzmin->setGold($this->wiedzmin->getgold+$zloto);
+        return "Sprzedano Przedmioty";
     }
+    else{return "Zly rodzaj transakcji";}
 }
 public function kupno(){
     for($i=0; $i<count($this->posiadane); $i++){
-         $id=$this->wiedzmin[0][id];
-         $nazwa=$this->posiadane[$i]['nazwa'];    
-         $typ=$this->posiadane[$i]['typ'];
-         $param1=$this->posiadane[$i]['param1'];
-         $param2=$this->posiadane[$i]['param2'];
-         $cena=$this->posiadane[$i]['cena']; 
-         $sql="insert into ekwipunek ('user_id', 'nazwa', 'typ', 'param1','param2','cena') values (:id, :nazwa,:typ,:param1,:param2,:cena)";
-         $query=$this->db -> getConnection() -> prepare($sql);
-         $this->result-> execute(array(":id" => $user_id, ":nazwa" => $nazwa, ":typ" => $typ, ":param1" => $param1, ":param2"=>$param2, ":cena"=>$cena));
+         $bohater_id=$this->wiedzmin[0][id];
+         $nazwa=$this->zaznaczone[$i]['nazwa'];    
+         $typ=$this->zaznaczone[$i]['typ'];
+         $param1=$this->zaznaczone[$i]['param1'];
+         $param2=$this->zaznaczone[$i]['param2'];
+         $cena=$this->zaznaczone[$i]['cena']; 
+         $sql="insert into ekwipunek ('bohater_id', 'nazwa', 'typ', 'param1','param2','cena') values (:bohater_id, :nazwa,:typ,:param1,:param2,:cena)";
+         $query=$this->db-> prepare($sql);
+         $query-> execute(array("bohater_id" => $bohater_id, ":nazwa" => $nazwa, ":typ" => $typ, ":param1" => $param1, ":param2"=>$param2, ":cena"=>$cena));
              }
          
      }
      public function sprzedarz(){
-         for($i=0; $i<count($this->wynik); $i++){
-             $id=$this->wiedzmin[0]['id'];
+         for($i=0; $i<count($this->zaznaczone); $i++){
+             $bohater_id=$this->wiedzmin[0]['id'];
              $nazwa=$this->zaznaczone[$i]['nazwa'];
-             $sql= 'DELETE FROM ekwipunek WHERE nazwa=:nazwa AND user_id=:id';
+             $sql= 'DELETE FROM ekwipunek WHERE nazwa=:nazwa AND bohater_id=:bohater_id';
              $query=$this->db->prepare($sql);
-             $query->execute(array(':nazwa' => $nazwa,':id'=>$user_id));
+             $query->execute(array(':nazwa' => $nazwa,':bohater_id'=>$bohater_id));
          }
      }
 
 public function potrzebnezloto(){
     foreach($this->getpost('zaznaczone') as $zaznaczone){
         for($i=0; $i<cont($this->wynik); $i++){ 
-        if($this->wynik[$i][nazwa]==$zaznaczone){
+        if($this->wynik[$i]['id']==$zaznaczone){
             $this->zaznaczone[]=$this->wynik[$i];
              $zloto+=$this->wynik[$i][cena];
          }
@@ -103,13 +113,23 @@ public function potrzebnezloto(){
      return $zloto;
 }
 public function nieposiadanerzeczy(){
-    $ekwipunek=$this->wiedzmin->getekwipunek();
        for($i=0; $i<count($this->zaznaczone); $i++){     
-         for($j=0; $j<cont($ekwipunek); $j++){
-         if($ekwipunek[$j][nazwa]==$this->zaznaczone[$i][nazwa]){
-         $this->$posiadane[]=$this->zaznaczone[$i];
+         for($j=0; $j<count($this->ekwipunek); $j++){
+         if($this->ekwipunek[$j][nazwa]==$this->zaznaczone[$i][nazwa]){
+             $this->posiadane[]=$this->zaznaczone[$i];
+             unset($this->zaznaczone[$i]);
+             $this->zaznaczone=array_values($this->zaznaczone);
           }
          }    
          }
+}
+public function getPrzedmioty(){
+    $sql= "select * from sklep ";
+    $query = $this->db ->prepare($sql);
+    $query -> execute();
+    $wynik=$query -> fetchAll();
+    return $wynik;
+    
+    
 }
 }

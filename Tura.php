@@ -73,36 +73,55 @@ class Tura {
      * Wywołuje funkcję wiadomość oraz czas_trwania
      */
     public function tura_przeciwnika() {
+        $this->kolejg=true;
         do{
             $this->punktyprzeciwnik--;
-            return $this->przeciwnik->wykonajAtak($this->gracz);
+            $atak[]=$this->przeciwnik->wykonajAtak($this->gracz);
+            ++$ilosc;
         }
         while( $this->punktyprzeciwnik==0);
+        return $atak[0]+"*"+$ilosc;
         
     }
-
     /**
      * Wywołuje funkcje akcji w pętli Zależnie od punktów akcji
      * Ustawia turę przeciwnika
      * @param type $opcja
      */
-    public function akcja($opcja) {
-        if($opcja!=null && $this->kolejg==true){
-            $this->kolejp=true;
+    public function akcja1($opcja) {
+        
+        if($this->punktygracz>0 && $this->kolejg==true){
             return $this->opcja($opcja);
         }
-        elseif($this->punktyprzeciwnik>0 && $this->kolejp==true){
-        $this->kolejg=true;
+    }
+
+   public function akcja2(){
+       
+       if($this->punktyprzeciwnik>0 && $this->punktygracz<=0){
+       $this->kolejp=true;
+       return;
+       }
+       elseif($this->punktygracz>0){
+           return $this->wyborruchu();
+       }
+   }
+   public function akcja3(){
+       
+       if($this->punktyprzeciwnik>0 && $this->kolejp==true){
         return $this->tura_przeciwnika();
         }
-        elseif($this->punktyprzeciwnik>0 && $this->kolejp==true){
-            return $this->wyborruchu();
-        }
-        else{
-            $this->aktywne();
+        else{return;}
+   }
+    public function losowanie(){
+        if($this->punktyprzeciwnik<=0 && $this->punktygracz<=0){
+        $this->aktywne();
             $this->czyjatura();
             $this->gracz->czas_trwania();
-            return $this->wyborruchu();
+            if($this->wyborruchu()!=null){
+            return $this->tura_przeciwnika()+"/n"+$this->wyborruchu();}
+            else{return $this->wyborruchu();}
+        }else{
+        return;
         }
     }
 
@@ -148,6 +167,8 @@ class Tura {
             $punkty = $this->obliczpunkty($szybkoscp, $szybkoscg);
             $this->przeciwnik->Getparam()->setpktakcji($punkty);
         }
+        $this->punktygracz=$this->gracz->Getparam()->getpktakcji();
+        $this->punktyprzeciwnik=$this->przeciwnik->Getparam()->getpktakcji();        
     }
 
     /**
@@ -204,6 +225,18 @@ public function losowy(){
                  
                   
                     <input type="submit" value="Wybierz akcje">
+              </form>';
+    }
+     public function wyborprzeciwnika(){
+         return  '<form action="index.php" method="POST>
+                  <select name="potwor">
+                    <option value="potwor1">Potwor1</option>
+                    <option value="potwor2">Potwor2</option>
+                    <option value="potwor3">Potwor3</option>
+                    <option value="potwor4">Potwor4</option>
+                    <option value="potwor5">Potwor5</option>
+                    </select>
+                    <input type="submit" value="Wybierz Przeciwnika">
               </form>';
     }
 }
