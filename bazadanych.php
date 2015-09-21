@@ -76,6 +76,21 @@ class bazadanych {
         return $pdost->fetchAll();
         
     }
+    
+    public function usun($tabela,array $name=null){
+        if($name == null){
+            $pdost = $this->pdo->prepare("DELETE * from $tabela");
+        }
+        else{
+            $wynik='';
+            foreach ($name as $pole => $wartosc) {
+                $wynik.=$pole . '=' . $this->jestString($wartosc) . ' AND ';
+            }
+            $wynik = substr($wynik,0, -4);
+            $pdost = $this->pdo->prepare("DELETE * from $tabela Where $wynik");
+        }
+        $pdost->execute();
+    }
 
     
     private function jestString($krotka)

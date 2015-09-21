@@ -13,123 +13,120 @@
  */
 class Sklep {
     
-    private $wyswietl;
-    
-    private $przedmioty;
-    
     private $wiedzmin;
     
-    private $wiedzmininfo;
-    
-    private $db;
-    
-    private $wynik;
    
-    private $zaznaczone;
-    
-    private $posiadane;
-    
-    private $ekwipunek;
-    
-    private $transakcja;
-    
     public function __construct(Postac\Wiedzmin $wiedzmin){
         $this->wiedzmin=$wiedzmin;
-        $this->ekwipunek=$this->wiedzmin->getekwipunek();
     }
     
-   public function obsluga($transakcja){
-       $this->db=$this->db=bazadanych::getInstance();
-       $this->transakcja=$transakcja;
-       if($this->transakcja=="sprzedaz"){
-       $this->wynik=$this->ekwipunek;
-       }elseif($this->transakcja=="kupno"){
-       $this->wynik=$this->getPrzedmioty();
-       }
-       for($i=0; $i<count($this->wynik); $i++){
-       $this->przedmioty+= '<input type="checkbox" name="zaznaczone[]" value='.$this->wynik[$i]['id'].'>'+$this->wynik[$i]['nazwa']+$this->wynik[$i]['param']+
-                           $this->wynik[$i][cena]+'<input type="submit" value='+$transakcja+'>'; 
-       }
-     
-     $this->wiedzmininfo=$this->wiedzmin->getGold+$this->wiedzmin->getName();
-     $this->wyswietl=$this->wiedzmininfo+'<form action="index.php" method="POST">'+$this->przedmioty;
-     return $this->wyswietl;
-}
-public function transakcja($transakcja){
-    $this->db=$this->db=bazadanych::getInstance();
-    if($transakcja=="kupno"){
-        $zloto=$this->potrzebnezloto();
-        if($this->wiedzmin->getgold()>$zloto){
-         $this->nieposiadanerzeczy();
-         $this->kupno();
-         $this->wiedzmin->setGold($this->wiedzmin->getgold-$zloto);
-         return"zakupiono przedmioty";
-     }
-     else{
-         return "Nie masz wystarczajaco pieniendzy";
-     }
-   }
-    elseif($transakcja=="sprzedaz"){
-        $zloto=$this->potrzebnezloto();
-        $this->sprzedarz();
-        $this->wiedzmin->setGold($this->wiedzmin->getgold+$zloto);
-        return "Sprzedano Przedmioty";
+    public function dokupienia(){
+        $db=bazadanych::getInstance();
+        $wynik=$db->select('sklep');
+        
+        
+        return $wynik;
     }
-    else{return "Zly rodzaj transakcji";}
-}
-public function kupno(){
-    for($i=0; $i<count($this->posiadane); $i++){
-         $bohater_id=$this->wiedzmin[0][id];
-         $nazwa=$this->zaznaczone[$i]['nazwa'];    
-         $typ=$this->zaznaczone[$i]['typ'];
-         $param1=$this->zaznaczone[$i]['param1'];
-         $param2=$this->zaznaczone[$i]['param2'];
-         $cena=$this->zaznaczone[$i]['cena']; 
-         $sql="insert into ekwipunek ('bohater_id', 'nazwa', 'typ', 'param1','param2','cena') values (:bohater_id, :nazwa,:typ,:param1,:param2,:cena)";
-         $query=$this->db-> prepare($sql);
-         $query-> execute(array("bohater_id" => $bohater_id, ":nazwa" => $nazwa, ":typ" => $typ, ":param1" => $param1, ":param2"=>$param2, ":cena"=>$cena));
-             }
-         
+    public function dosprzedania(){
+        $db=bazadanych::getInstance();
+        $wynik=$db->select('ekwipunek');
+      
+        return $wynik;
+    }
+    public function kupno2($kupione){
+        $posiadane=$this->dosprzedania();
+        $zloto=$this->potrzebnezloto($kupione);
+        if($this->wiedzmin->Getparam->getGold()>$zloto){
+            $dokupienia=$this->nieposiadanerzeczy($kupione,$posiadane);
+            $this->kupno($dokupienia);
+            $this->wiedzmin->Getparam->setGold($this->wiedzmin->Getparam->getGold-$zloto);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public function sprzedarz2($sprzedane){
+        $zloto=$this->potrzebnezloto($sprzedane);
+        $this->sprzedarz($sprzedane);
+        $this->wiedzmin->Getparam->setGold($this->wiedzmin->Getparam->getGold+$zloto);
+    }
+  // public function obsluga($transakcja){
+      // $this->db=$this->db=bazadanych::getInstance();
+     //  $this->transakcja=$transakcja;
+      // if($this->transakcja=="sprzedaz"){
+      // $this->wynik=$this->ekwipunek;
+      // }elseif($this->transakcja=="kupno"){
+     //  $this->wynik=$this->getPrzedmioty();
+     //  }
+      //for($i=0; $i<count($this->wynik); $i++){
+     //  $this->przedmioty+= '<input type="checkbox" name="zaznaczone[]" value='.$this->wynik[$i]['id'].'>'+$this->wynik[$i]['nazwa']+$this->wynik[$i]['param']+
+      //                     $this->wynik[$i][cena]+'<input type="submit" value='+$transakcja+'>'; 
+     //  }
+     //
+    // $this->wiedzmininfo=$this->wiedzmin->getGold+$this->wiedzmin->getName();
+    // $this->wyswietl=$this->wiedzmininfo+'<form action="index.php" method="POST">'+$this->przedmioty;
+    // return $this->wyswietl;
+//}
+//public function transakcja($transakcja){
+   // $this->db=$this->db=bazadanych::getInstance();
+    //if($transakcja=="kupno"){
+       // $zloto=$this->potrzebnezloto();
+       // if($this->wiedzmin->getgold()>$zloto){
+        // $this->nieposiadanerzeczy();
+        // $this->kupno();
+        // $this->wiedzmin->setGold($this->wiedzmin->getgold-$zloto);
+        // return"zakupiono przedmioty";
+    // }
+    // else{
+        // return "Nie masz wystarczajaco pieniendzy";
+    // }
+  // }
+   // elseif($transakcja=="sprzedaz"){
+    //    $zloto=$this->potrzebnezloto();
+       // $this->sprzedarz();
+      //  $this->wiedzmin->setGold($this->wiedzmin->getgold+$zloto);
+      //  return "Sprzedano Przedmioty";
+  //  }
+    //else{return "Zly rodzaj transakcji";}
+//}
+public function kupno($dokupienia){
+    $db=bazadanych::getInstance();
+    foreach($dokupienia as $k){
+        $db->zapisz('ekwipunek',array('nazwa'=>$k['nazwa'],'param1'=>$k['param1'],'param2'=>$k['param2'],'cena'=>$k['cena'],'id_postaci'=>$this->wiedzmin->Getparam->getId()));
+       }  
      }
-     public function sprzedarz(){
-         for($i=0; $i<count($this->zaznaczone); $i++){
-             $bohater_id=$this->wiedzmin[0]['id'];
-             $nazwa=$this->zaznaczone[$i]['nazwa'];
-             $sql= 'DELETE FROM ekwipunek WHERE nazwa=:nazwa AND bohater_id=:bohater_id';
-             $query=$this->db->prepare($sql);
-             $query->execute(array(':nazwa' => $nazwa,':bohater_id'=>$bohater_id));
+     public function sprzedarz($sprzedane){
+         $db=bazadanych::getInstance();
+         foreach($sprzedane as $p){
+          $db->usun('ekwipunek',array('nazwa'=>$p['nazwa'],'id_postaci'=>$this->wiedzmin->Getparam->getId()));    
          }
      }
 
-public function potrzebnezloto(){
-    foreach($this->getpost('zaznaczone') as $zaznaczone){
-        for($i=0; $i<cont($this->wynik); $i++){ 
-        if($this->wynik[$i]['id']==$zaznaczone){
-            $this->zaznaczone[]=$this->wynik[$i];
-             $zloto+=$this->wynik[$i][cena];
-         }
+public function potrzebnezloto($produkty){
+    foreach($produkty as $zaznaczone){
+             $zloto+=$zaznaczone['cena'];
         }
-     }
      return $zloto;
 }
-public function nieposiadanerzeczy(){
-       for($i=0; $i<count($this->zaznaczone); $i++){     
-         for($j=0; $j<count($this->ekwipunek); $j++){
-         if($this->ekwipunek[$j][nazwa]==$this->zaznaczone[$i][nazwa]){
-             $this->posiadane[]=$this->zaznaczone[$i];
-             unset($this->zaznaczone[$i]);
-             $this->zaznaczone=array_values($this->zaznaczone);
-          }
-         }    
-         }
+public function nieposiadanerzeczy($kupione,$zaznaczone){
+       foreach($kupione as $k){
+           foreach($zaznaczone as $p){
+               if($p['nazwa']==$k['nazwa']){
+                   unset($zaznaczone[$p]);
+               }
+           }
+       }
+       array_values($zaznaczone);
+       return $zaznaczone;
 }
-public function getPrzedmioty(){
-    $sql= "select * from sklep ";
-    $query = $this->db ->prepare($sql);
-    $query -> execute();
-    $wynik=$query -> fetchAll();
-    return $wynik;
+//public function getPrzedmioty(){
+    //$sql= "select * from sklep ";
+   // $query = $this->db ->prepare($sql);
+   // $query -> execute();
+   // $wynik=$query -> fetchAll();
+   // return $wynik;
     
     
-}
+//}
 }

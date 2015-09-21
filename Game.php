@@ -15,8 +15,8 @@ class Game extends request {
         
         $szablon =  new Ladowanie();
         
+       $rodzaj = $szablon->getSzablon();
         if($szablon->jestWyslany()){
-           $rodzaj = $szablon->getSzablon();
            $dane = $szablon->getPOST();
 //           
            if($rodzaj == 'rejestracja'){
@@ -34,26 +34,58 @@ class Game extends request {
                }else{
                    $session->setMessage('Zalogowano');
                }
-               $session->setUp($user);
-           }elseif($rodzaj == 'gra'){
-               
+               $session->setUp(array('user'=>new Uzytkownik($user)));
            }
+           elseif($rodzaj == 'wyborpostaci'){
+               $user=$session->get('user');
+               $wyborpostaci=new Wyborpostaci($user);
+               $session->setMessage('Utworzono postac, wybierz postac');
+               $session->setUp(array('wynik'=>$wyborpostaci->pobierz()));
+               if(!empty($dane['imie'])){
+                   $wyborpostaci->utwoz($dane['imie']);
+                   $session->setMessage('Utworzono postac, wybierz postac');
+               }elseif(isset($dane['wybor'])){
+                $wybor=$wyborpostaci->wybierz($dane['wybor']);
+                $session->setUp(array('postac'=>new Postac\Wiedzmin($wybor)));
+                $session->setMessage('Wybrano postac');
+            }
+           }    
+             //  if($rodzaj=='sklep'){
+                  //  $postac=$session->get('postac');
+                  //  $sklep=new Sklep($postac);
+                  //  $session->setUp(array('sklep'=>$sklep));
+                  //  $session->setUp(array('wynik2'=>$sklep->dokupienia()));
+                  //  $session->setUp(array('wynik3'=>$sklep->dosprzedania()));
+                   // if(isset($dane['kup'])){
+                   //     $sklep=$session->get('sklep');
+                   //     $wynik=$sklep->kupno2($dane['kup']);
+                    //    if($wynik){$session->setMessage('Zakupiono produkty');}
+                    //    else{$session->setMessage('Masz za malo zlota');}
+                    //    }
+                 //   elseif(isset($dane['sprzedaj'])){
+                    //    $sklep=$session->get('sklep');
+                    //    $sklep->sprzedaz2($dane['sprzedaj']);
+                     //   $session->setMessage('Sprzedales produkty');
+                   //}
+              // }
            
-           
-           
-           
+        
         }
-
-       
+    
+      
 //        echo $session->get('login');
 //        echo $session->get('haslo');
 //        echo $session->get('id');
-        
         $variable = array(
+            'sklep'=>$session->get('sklep'),
+            'wynik3'=>$session->get('wynik3'),
+            'wynik2'=>$session->get('wynik2'),
+            'wynik'=>$session->get('wynik'),
             'message'=>$session->getMessage(),
-            'login'=>$session->get('login')
+            'user'=>$session->get('user'),
+            'postac'=>$session->get('postac')
         );
-        
+    
         $szablon->szablon($variable);
 //        if ($_GET['strona']=='rejestracja' && isset($_POST['submit'])) {
 //            echo"Czychcesz sie zarejestrować czy zalogować?";

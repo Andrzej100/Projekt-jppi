@@ -24,7 +24,7 @@ class Wiedzmin extends Postac {
         $this->param = new \Parameters();
         $this->param->setStringParameter($param);
         $this->zycie = $this->param->getZycie();
-        $this->setName($param[0][name]);
+        $this->setName($param[0]['imie']);
     }
     
     
@@ -120,25 +120,9 @@ class Wiedzmin extends Postac {
      * @return string  
      */
     public function getName() {
-        return 'jestem Wiedzmin';
+        return $this->name;
     }
-    public function getGold(){
-        $this->db=bazadanych::getInstance();
-        $bohater_id=$this->bohater_id;
-        $sql= "select * from bohater where 'bohater_id' = $bohater_id";
-        $query = $this->db -> prepare($sql);
-        $query -> execute(array($bohater_id));
-        $result = $query -> fetchAll();
-        return $result[0][gold];
-    }
-
-    public function setGold($gold){
-     $this->db=bazadanych::getInstance();
-     $bohater_id=$this->bohater_id;
-     $sql="UPDATE poziom SET gold=:gold WHERE bohater_id=:bohater_id";
-     $query= $query = $this->db -> prepare($sql);
-     $query -> execute(array($gold,$bohater_id));
-    }
+    
     
     public function aktywnyEkwipunek($bron){
       

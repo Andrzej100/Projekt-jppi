@@ -18,6 +18,8 @@ class Parameters {
     private $zrecznosc;
     private $zycie;
     private $pktakcji = 1;
+    private $id;
+    private $gold;
 
     /**
      * Ustawia parametry postaci
@@ -30,6 +32,8 @@ class Parameters {
         $this->setSila($string[0]['sila']);
         $this->setZrecznosc($string[0]['zrecznosc']);
         $this->setZycie($string[0]['zycie']);
+        $this->setGold($string[0]['zloto']);
+        $this->setId($string[0]['id']);
         
     }
      
@@ -120,5 +124,16 @@ class Parameters {
     public function getpktakcji() {
         return $this->pktakcji;
     }
-
+    public function setGold($gold){
+        $this->gold=$gold;
+    }
+   public function setId($id){
+       $this->id=$id;
+   }
+   public function getId(){
+       return $this->id;
+   }
+   public function getGold(){
+       return $this->gold;
+   }
 }
