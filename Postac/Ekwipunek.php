@@ -13,88 +13,79 @@
  */
 class Ekwipunek {
 
-    private $ekwipunek;
-    
-    private $aktywne;
-    
-    private $db;
-    
+  
     private $bohater_id;
 
-    public function __construct($aktywne,$bohater_id) {
+    public function __construct($bohater_id) {
 
-        $this->aktywne=$aktywne;
         $this->bohater_id=$bohater_id;
     }
-
-    public function dodajdo_ekwipunku($przedmiot){
-         $this->db=bazadanych::getInstance();
-         $nazwa=$przedmiot[0][nazwa];
-         $typ=$przedmiot[0][typ];
-         $param1=$przedmiot[0][param1];
-         $param2=$przedmiot[0][param2];
-         $cena=$przedmiot[0][cena];
-         $bohater_id=$this->bohater_id;
-         $sql="insert into ekwipunek ('bohater_id', 'nazwa', 'typ', 'param1','param2','cena') values (:bohater_id, :nazwa,:typ,:param1,:param2,:cena)";
-         $query=$this->db ->prepare($sql);
-         $query-> execute(array(":bohater_id" => $bohater_id, ":nazwa" => $nazwa, ":typ" => $typ, ":param1" => $param1, ":param2"=>$param2, ":cena"=>$cena));
+     
+    public function aktywne(){
+        $db = bazadanych::getInstance();
+        $wynik=$db->select('ekwipunek',array('aktywne'=>1,'postac_id'=>$this->bohater_id));
+         if($wynik == false){
+            return false;
+        }
+        
+        return $wynik;
     }
     
-    public function aktywnyekwipunek($przedmiotid){
-         $this->db=bazadanych::getInstance();
-         $przedmiot=$this->getekwpunekbyid($przedmiotid);
-         if($przedmiot[0][typ]=='bron'){
-             $bron=new bron($przedmiot);
-             return $bron;
-         }elseif($przedmiot[0][typ]=='zbroja'){
-             $zbroja=new zbroja($przedmiot);
-             return $zbroja;
-         }
-    }
-    
-    public function wyposazone($i){
-        if(issest($this->aktywne)){
-        if($this->ekwipunek[$i][id]==$this->saktywne[0]){
-            return 'Aktywna Bron';
-        }
-        elseif($this->ekwipunek[$i][id]==$this->aktywne[1]){
-            return 'Aktywna Zbroja';
-        }
-        else{
-            return '<input type="submit" value="wyposaz"/>';
-        }
-        }
-    }
-
-    public function showekwipunek() {
-        $this->getekwpunek();
-        if ($this->ekwipunek != null) {
-            for ($i = 0; $i < count($this->ekwipunek); $i++) {
-                $wynik +='<form action="index.php" method="POST">'+$this->ekwipunek[$i][name] + ' '
-                + $this->ekwipunek[$i][param1] +' '+$this->ekwipunek[$i][param2]+'<input type="hidden" name="idbroni" value='+$this->ekwipunek[$i][id]+'/>'+
-        $this->wyposazone($i)+ '/n';
+    public function bron($aktywne,$nazwa){
+        foreach($aktywne as $a){
+            if($a['nazwa']==$nazwa){
+                $aktywna=$a;
             }
         }
-         return $wynik;
+        return $a;
     }
     
-    public function getekwpunekbyid($id){
-        $bohater_id=$this->bohater_id; 
-        $id_ekwipunek=$id;
-         $sql= "select * from ekwipunek where 'bohater_id'=$bohater_id AND 'id_ekwipunek'=$id_ekwipunek";
-         $query = $this->db->prepare($sql);
-         $query -> execute(array($id_ekwipunek,$bohater_id));
-         $ekwipunek = $query -> fetchAll();
-         return $ekwipunek;
+    public function aktywuj($nazwa){
+        $db = bazadanych::getInstance();
+        $aktywne=$this->aktywne();
+        $bron=$this->bron($aktywne, $nazwa);
+        if($aktywne[0]['typ']==$bron['typ']){
+         $db->update('ekwipunek',array('aktywne'=>0),array('nazwa'=>$aktywne[0]['nazwa'],'postac_id'=>$this->bohater_id));
+         $db->update('ekwipunek',array('aktywne'=>1),array('nazwa'=>$nazwa,'postac_id'=>$this->bohater_id));
+        }elseif($aktywne[1]['typ']==$bron['typ']){
+         $db->update('ekwipunek',array('aktywne'=>0),array('nazwa'=>$aktywne[1]['nazwa'],'postac_id'=>$this->bohater_id));
+         $db->update('ekwipunek',array('aktywne'=>1),array('nazwa'=>$nazwa,'postac_id'=>$this->bohater_id));
+        }elseif($aktywne==false){
+           $db->update('ekwipunek',array('aktywne'=>1),array('nazwa'=>$nazwa,'postac_id'=>$this->bohater_id)); 
+        }
+        
     }
-    public function getekwpunek(){
-         $bohater_id=$this->bohater_id;
-         $this->db=bazadanych::getInstance();
-         $sql= "select * from ekwipunek where bohater_id=$bohater_id";
-         $query = $this->db ->prepare($sql);
-         $query -> execute(array($bohater_id));
-         $this->ekwipunek = $query -> fetchAll();
+  
+    public function aktywnabron($typ){
+         $db = bazadanych::getInstance();
+         $przedmiot=$this->aktywne();
+         if($przedmiot!=false){
+         if($przedmiot[0]['typ']==$typ){
+             $bron=new $typ($przedmiot);
+             return $bron;
+         }elseif($przedmiot[1]['typ']==$typ){
+             $bron=new $typ($przedmiot);
+             return $bron;
+         }
+       }else{
+           return false;
+       }
     }
+    
+   
+  
+
+    public function showekwipunek() {
+       
+        $db=bazadanych::getInstance();
+        $wynik=$db->select('ekwipunek',array('postac_id'=>$this->bohater_id));
+      
+        return $wynik;
+        
+    }
+    
+    
+    
    
 
 }

@@ -91,6 +91,25 @@ class bazadanych {
         }
         $pdost->execute();
     }
+    
+    public function update($tabela,$value,$name=null){
+        
+        foreach($value as $pole=>$wartosc){
+            $wynik.=$pole.'='.$this->jestString($wartosc).', ';
+        }
+        $wynik=substr($wynik, 0, strlen($wynik)-2);
+        if($name==null){
+             $pdost = $this->pdo->prepare("UPDATE $tabela SET $wynik");
+        }
+        else{
+            foreach($name as $pola=>$wartosci){
+                $wynik2=$pola.'='.$this->jestString($wartosci) .' AND ';
+            }
+            $wynik2=substr($wynik2,0, -4);
+            $pdost = $this->pdo->prepare("UPDATE $tabela SET $wynik WHERE $wynik2");
+        }
+        $pdost->execute();
+    }
 
     
     private function jestString($krotka)

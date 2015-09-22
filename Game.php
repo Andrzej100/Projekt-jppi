@@ -49,7 +49,36 @@ class Game extends request {
                 $session->setUp(array('postac'=>new Postac\Wiedzmin($wybor)));
                 $session->setMessage('Wybrano postac');
             }
-           }    
+           }
+           elseif($rodzaj=='ekwipunek'){
+               $postac=$session->get('postac');
+               $ekwipunek = new Ekwipunek($postac->getId());
+               $showekwipunek=$ekwipunek->showekwipunek();
+               $session->setUp(array('bronie'=>$showekwipunek));
+               $session->setUp(array('ekwipunek'=>$ekwipunek));
+               if(!empty($dane['wybor'])){
+                   $postac=$session->get('postac');
+                   $ekwipunek=$session->get('ekwipunek');
+                   $ekwipunek->aktywuj($dane['wybor']);
+                   if($ekwipunek->aktywnabron('bron')!=false){
+                   $postac->aktywnyEkwipunek($ekwipunek->aktywnabron('bron'),'bron');}
+                   if($ekwipunek->aktywnabron('zbroja')!=false){
+                   $postac->aktywnyEkwipunek($ekwipunek->aktywnabron('zbroja'),'zbroja');
+                   }
+               }
+           }
+           elseif($rodzaj=='przeciwnik'){
+               $przeciwnik= new Przeciwnik();
+               $przeciwnicy=$przeciwnik->wszyscyprzeciwnicy();
+               $session->setUp(array('przeciwnik'=>$przeciwnik));
+               $session->setUp(array('przeciwnicy'=>$przeciwnicy));
+               if(!empty($dane['wybor'])){
+                  $przeciwnik= $session->get('przeciwnik');
+                  $przeciwnik->wybranyprzeciwnik($dane['wybor']);
+                  $potwor= new Postac\Potwor($przeciwnik);
+                  $session->setUp(array('potwor'=>$potwor));
+               }
+           }
              //  if($rodzaj=='sklep'){
                   //  $postac=$session->get('postac');
                   //  $sklep=new Sklep($postac);
@@ -77,6 +106,8 @@ class Game extends request {
 //        echo $session->get('haslo');
 //        echo $session->get('id');
         $variable = array(
+            'przeciwnicy'=>$session->get('przeciwnicy'),
+            'bronie'=>$session->get('bronie'),
             'sklep'=>$session->get('sklep'),
             'wynik3'=>$session->get('wynik3'),
             'wynik2'=>$session->get('wynik2'),

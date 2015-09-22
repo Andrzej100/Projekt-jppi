@@ -22,14 +22,6 @@ class Potwor extends Postac {
         $this->setName($name);
         
     }
-    public function getPotwor($name){
-        $this->db=bazadanych::getInstance();
-        $sql= "select * from potwor where 'potwor_name' = $name";
-        $query = $this->db->prepare($sql);
-        $query -> execute(array($name)); 
-        $result = $query -> fetchAll();
-        return $result;
-    }
     
     public function getName() {
         return $this->name;

@@ -35,6 +35,8 @@ class bron {
         $this->nazwa=$przedmiot[0]['nazwa'];
         
     }
+    
+    
     public function gettype(){
         return $this->typ;
     }

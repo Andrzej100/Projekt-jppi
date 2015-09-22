@@ -123,16 +123,24 @@ class Wiedzmin extends Postac {
         return $this->name;
     }
     
-    
-    public function aktywnyEkwipunek($bron){
+    public function posiadaaktwnabron(){
+        if(isset($this->bron)){
+        $this->Getparam()->setSila($this->Getparam()->getSila()+$this->bron->getparam1());
+        $this->Getparam()->setZrecznosc($this->Getparam()->getZrecznosc()-$this->bron->getparam2());
+        }
+        if(isset($this->zbroja)){
+        $this->Getparam()->setZycie($this->Getparam()->getZycie()+$this->zbroja->getparam1());
+         $this->Getparam()->setSzybkosc($this->Getparam()->getSzybkosc()-$this->zbroja->getparam1());
+        }
+        
+    }
+    public function aktywnyEkwipunek($bron,$typ){
       
-            if ($bron->gettype() == 'bron') {
+            if ($typ=='bron') {
                 $this->bron = $bron;
-                return "Ustawiono nowa bron";
             }
-            if ($bron->gettype()== 'zbroja') {
+            if ($typ=='zbroja') {
                 $this->zbroja =$bron;
-                return "Ustawiono nowa zbroja";
             } 
            
         }
