@@ -32,6 +32,10 @@ class Tura {
     
     private $kolejp;
     
+    private $turag;
+    
+    private $turap;
+    
     public function dodajGracza(Postac\Wiedzmin $wiedzmin) {
         $this->gracz = $wiedzmin;
     }
@@ -43,18 +47,19 @@ class Tura {
     public function dodajPrzeciwnika(Postac\Potwor $potwor) {
         $this->przeciwnik = $potwor;
     }
-
+    public function dodajzloto(){
+        
+       $this->gracz->Getparam->setGold($this->gracz->Getparam->getGold()+$this->przeciwnik->zlotopotwora());
+    }
     /**
      * Sprawdza czy pobrany obiektma parametr życie mniejszy bądź równy 0
      * @return boolean
      */
     public function sprawdzCzyKoniec() {
         if ($this->gracz->Getparam()->getZycie() <= 0) {
-            Console::write("Koniec gry");
             return false;
         }
         elseif($this->przeciwnik->Getparam()->getZycie() <= 0){
-            Console::write("Koniec gry wygrales!!!");
             return false;
         }
         return true;
@@ -73,7 +78,14 @@ class Tura {
      * Wywołuje funkcję wiadomość oraz czas_trwania
      */
     public function tura_przeciwnika() {
+        if(turag==0){
         $this->kolejg=true;
+        $this->kolejp=false;
+        $this->turap=1;
+        }
+        else{$this->kolejp=false;
+        $this->turap=1;
+        }
         do{
             $this->punktyprzeciwnik--;
             $atak[]=$this->przeciwnik->wykonajAtak($this->gracz);
@@ -90,38 +102,45 @@ class Tura {
      */
     public function akcja1($opcja) {
         
-        if($this->punktygracz>0 && $this->kolejg==true){
             return $this->opcja($opcja);
-        }
     }
 
-   public function akcja2(){
+   //public function akcja2(){
        
-       if($this->punktyprzeciwnik>0 && $this->punktygracz<=0){
-       $this->kolejp=true;
-       return;
-       }
-       elseif($this->punktygracz>0){
-           return $this->wyborruchu();
-       }
-   }
+      // if($this->punktyprzeciwnik>0 && $this->punktygracz<=0){
+      // $this->kolejp=true;
+      // return;
+       //}
+      // elseif($this->punktygracz>0){
+        //   return $this->wyborruchu();
+      // }
+  // }
    public function akcja3(){
        
-       if($this->punktyprzeciwnik>0 && $this->kolejp==true){
         return $this->tura_przeciwnika();
-        }
-        else{return;}
+        
    }
     public function losowanie(){
-        if($this->punktyprzeciwnik<=0 && $this->punktygracz<=0){
-        $this->aktywne();
+        
+            $this->aktywne();
             $this->czyjatura();
             $this->gracz->czas_trwania();
-            if($this->wyborruchu()!=null){
-            return $this->tura_przeciwnika()+"/n"+$this->wyborruchu();}
-            else{return $this->wyborruchu();}
-        }else{
-        return;
+            $this->turag=0;
+            $this->turap=0;
+            if($this->kolejg==false){
+            return $this->tura_przeciwnika()."przeciwnik rozpoczyna ture pierwszy";}
+            elseif($this->kolejg==true){return "Gracz rozpoczyna ture pierwszy";}
+        
+    }
+    public function nastepny(){
+        if($this->turap==0){
+            $this->kolejp=true;
+            $this->kolejg=false;
+            $this->turag=1;
+        }
+        else{
+            $this->kolejg=false;
+            $this->turag=1;
         }
     }
 
@@ -146,7 +165,11 @@ class Tura {
                 
             case "d":
                  $this->punktygracz--;
+                 $this->nastepny();
                return  $this->gracz->wykonajObrone();
+               
+            case "e":
+                $this->nastepny();
                
             default:
                 //                exit();
@@ -206,37 +229,12 @@ public function losowy(){
             $this->losowy();
         }
     }
-    public function wyborruchu(){
-        if($this->kolejg==true){
-        return  '<form action="index.php" method="POST>
-                  <select name="akcja">
-                    <option value="a">Atak</option>
-                    <option value="b">Stworzenie Eiksiru</option>
-                    <option value="c">Wypicie Eliksiru</option>
-                    <option value="d">Obrona</option>
-                    <option value="null">Koniec Tury</option>
-                    </select>
-                    <input type="submit" value="Wybierz akcje">
-              </form>';
-        }
+    public function getKolejg(){
+        return $this->kolejg;
     }
-    public function utwurzeliksirform(){
-        return  '<form action="index.php" method="POST>
-                 
-                  
-                    <input type="submit" value="Wybierz akcje">
-              </form>';
+    
+    public function getKolejp(){
+        return $this->kolejg;
     }
-     public function wyborprzeciwnika(){
-         return  '<form action="index.php" method="POST>
-                  <select name="potwor">
-                    <option value="potwor1">Potwor1</option>
-                    <option value="potwor2">Potwor2</option>
-                    <option value="potwor3">Potwor3</option>
-                    <option value="potwor4">Potwor4</option>
-                    <option value="potwor5">Potwor5</option>
-                    </select>
-                    <input type="submit" value="Wybierz Przeciwnika">
-              </form>';
-    }
+   
 }

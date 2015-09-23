@@ -144,5 +144,5 @@ class Wiedzmin extends Postac {
             } 
            
         }
-    
+        public function poziom(){}
 }

@@ -26,6 +26,11 @@ class Potwor extends Postac {
     public function getName() {
         return $this->name;
     }
+    public function zlotopotwora(){
+        $sila=$this->Getparam()->getSila();
+        $zloto=$sila*10;
+        return $zloto;
+    }
     
 }
 

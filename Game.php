@@ -79,6 +79,35 @@ class Game extends request {
                   $session->setUp(array('potwor'=>$potwor));
                }
            }
+           elseif($rodzaj=="tura"){
+               $postac=$session->get('postac');
+               $przeciwnik=$session->get('przeciwnik');
+               $tura=new Tura();
+               $tura->dodajGracza($postac);
+               $tura->dodajPrzeciwnika($przeciwnik);
+               $session->setMessage('Rozpocznij');
+               $session->setUp(array('tura'=>$tura));
+               if(isset($dane['wybor'])){
+                   $tura=$session->get('tura');
+                   do{
+                      if($tura->getKolejg()==true){$akcja=$tura->akcja1($dane['wybor']);$session->setMessage($akcja); }
+                      if($tura->getKolejp()==true){$akcja=$tura->akcja3();$session->setMessage($akcja);}
+                      if($tura->getKolejg()==false && $tura->getKolejp()==false){$akcja=$tura->losowanie();$session->setMessage($akcja);}
+                   }
+                   while($tura->sprawdzCzyKoniec());
+                   if($tura->sprawdzCzyKoniec()){
+                       $postac=$session->get('postac');
+                       $nowypoziom=new Nowypoziom($postac);
+                       $wynik[0]=true;
+                       $wynik[1]=$nowypoziom->punkty();
+                       $session->setUp(array('wynik4'=>$wynik));
+                       $tura->dodajzloto();
+                   }
+               }  
+           }
+           elseif($rodzaj=="nowypoziom"){
+               
+           }
              //  if($rodzaj=='sklep'){
                   //  $postac=$session->get('postac');
                   //  $sklep=new Sklep($postac);
@@ -109,6 +138,7 @@ class Game extends request {
             'przeciwnicy'=>$session->get('przeciwnicy'),
             'bronie'=>$session->get('bronie'),
             'sklep'=>$session->get('sklep'),
+            'wynik3'=>$session->get('wynik4'),
             'wynik3'=>$session->get('wynik3'),
             'wynik2'=>$session->get('wynik2'),
             'wynik'=>$session->get('wynik'),
