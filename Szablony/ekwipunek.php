@@ -12,7 +12,7 @@ and open the template in the editor.
     <body>
         <form action="index.php?strona=ekwipunek" method="POST">
             <select name="wybor">
-                <?phpforeach($bronie as $bron){?>
+                <?phpforeach($wynik as $bron){?>
                  <?phpif($bron['aktywne']==1){
                      
                      echo $bron['nazwa'].$bron['param1'].$bron['param2']."-aktywne";

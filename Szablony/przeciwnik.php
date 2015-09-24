@@ -12,7 +12,7 @@ and open the template in the editor.
     <body>
         <form action="index.php?strona=przeciwnik" method="POST">
             <select name="wybor">
-                <?php foreach($przeciwnicy as $p) { ?>
+                <?php foreach($wynik as $p) { ?>
                     <option value="<?php echo $p['imie'];?>" ><?php echo $p['imie'].$p['sila'].$p['szybkosc'].$p['zrecznosc'].$p['zycie'];?></option>
                 <?php }?>
                      

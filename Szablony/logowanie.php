@@ -12,8 +12,6 @@ and open the template in the editor.
     <body>
         Lgogwanie użytkownika
         <?php echo $message;?>
-           <?php //echo $user->getLogin();?>
-           <?php //echo $user->getId();?>
         <form action="index.php?strona=logowanie" method="POST">
             <input name="login"  />
             <input name="haslo" />

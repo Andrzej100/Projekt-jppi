@@ -14,7 +14,7 @@ and open the template in the editor.
         <?php var_dump($sklep);?>
          Kupowanie
         <form action="index.php?strona=sklep" method="POST">
-             <?php foreach($wynik2 as $p) { ?>
+             <?php foreach($wynik as $p) { ?>
             <input type="checkbox" name="zaznaczone[]" value="<?php echo $p['nazwa'];?>">
             <?php echo $p['nazwa'].$p['param1'].$p['param2'].$p['cena'];?>
              <?php }?>
@@ -22,7 +22,7 @@ and open the template in the editor.
         </form>
          Sprzedawanie
         <form action="index.php?strona=sklep" method="POST">
-            <?php foreach($wynik3 as $k) { ?>
+            <?php foreach($wynik2 as $k) { ?>
             <input type="checkbox" name="zaznaczone[]" value="<?php echo $k['nazwa'];?>">
              <?php echo $k['nazwa'].$k['param1'].$k['param2'].$k['cena'];?>
             <?php }?>

@@ -23,7 +23,6 @@ class Game extends request {
                
                $rejestracja = new Rejestracja(new Uzytkownik($dane['login'], $dane['haslo']));
                $rejestracja->zapisz();
-               $session->setUp($dane);
                $session->setMessage('Dodano Uzytkownika');
                
            }elseif($rodzaj == 'logowanie'){
@@ -54,7 +53,7 @@ class Game extends request {
                $postac=$session->get('postac');
                $ekwipunek = new Ekwipunek($postac->getId());
                $showekwipunek=$ekwipunek->showekwipunek();
-               $session->setUp(array('bronie'=>$showekwipunek));
+               $session->setUp(array('wynik'=>$showekwipunek));
                $session->setUp(array('ekwipunek'=>$ekwipunek));
                if(!empty($dane['wybor'])){
                    $postac=$session->get('postac');
@@ -71,7 +70,7 @@ class Game extends request {
                $przeciwnik= new Przeciwnik();
                $przeciwnicy=$przeciwnik->wszyscyprzeciwnicy();
                $session->setUp(array('przeciwnik'=>$przeciwnik));
-               $session->setUp(array('przeciwnicy'=>$przeciwnicy));
+               $session->setUp(array('wynik'=>$przeciwnicy));
                if(!empty($dane['wybor'])){
                   $przeciwnik= $session->get('przeciwnik');
                   $przeciwnik->wybranyprzeciwnik($dane['wybor']);
@@ -117,38 +116,33 @@ class Game extends request {
                  $nowypoziom->setpoints($dane['wybor']);
               }
            }
-             //  if($rodzaj=='sklep'){
-                  //  $postac=$session->get('postac');
-                  //  $sklep=new Sklep($postac);
-                  //  $session->setUp(array('sklep'=>$sklep));
-                  //  $session->setUp(array('wynik2'=>$sklep->dokupienia()));
-                  //  $session->setUp(array('wynik3'=>$sklep->dosprzedania()));
-                   // if(isset($dane['kup'])){
-                   //     $sklep=$session->get('sklep');
-                   //     $wynik=$sklep->kupno2($dane['kup']);
-                    //    if($wynik){$session->setMessage('Zakupiono produkty');}
-                    //    else{$session->setMessage('Masz za malo zlota');}
-                    //    }
-                 //   elseif(isset($dane['sprzedaj'])){
-                    //    $sklep=$session->get('sklep');
-                    //    $sklep->sprzedaz2($dane['sprzedaj']);
-                     //   $session->setMessage('Sprzedales produkty');
-                   //}
-              // }
+               if($rodzaj=='sklep'){
+                    $postac=$session->get('postac');
+                    $sklep=new Sklep($postac);
+                    $session->setUp(array('sklep'=>$sklep));
+                    $session->setUp(array('wynik'=>$sklep->dokupienia()));
+                    $session->setUp(array('wynik2'=>$sklep->dosprzedania()));
+                    if(isset($dane['kup'])){
+                        $sklep=$session->get('sklep');
+                        $wynik=$sklep->kupno2($dane['kup']);
+                        if($wynik){$session->setMessage('Zakupiono produkty');}
+                        else{$session->setMessage('Masz za malo zlota');}
+                        }
+                    elseif(isset($dane['sprzedaj'])){
+                        $sklep=$session->get('sklep');
+                        $sklep->sprzedaz2($dane['sprzedaj']);
+                        $session->setMessage('Sprzedales produkty');
+                   }
+               }
            
         
         }
     
       
-//        echo $session->get('login');
-//        echo $session->get('haslo');
-//        echo $session->get('id');
+
         $variable = array(
-            'przeciwnicy'=>$session->get('przeciwnicy'),
-            'bronie'=>$session->get('bronie'),
+            
             'sklep'=>$session->get('sklep'),
-            'wynik3'=>$session->get('wynik4'),
-            'wynik3'=>$session->get('wynik3'),
             'wynik2'=>$session->get('wynik2'),
             'wynik'=>$session->get('wynik'),
             'message'=>$session->getMessage(),
