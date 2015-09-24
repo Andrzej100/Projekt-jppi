@@ -10,9 +10,13 @@ and open the template in the editor.
         <title></title>
     </head>
     <body>
+        <?php echo $message; ?>
+        <?php echo $punkty; ?>
         <form action="index.php?strona=nowypoziom" method="POST">
-            
-            
+            Sila<?php echo $wynik[0]; ?><input type="submit"  name="wybor" value="+1 Sila"/>
+            Szybkosc<?php echo $wynik[1]; ?><input type="submit"  name="wybor" value="+1 Szybkosc"/>
+            Zrecznosc<?php echo $wynik[2]; ?><input type="submit"  name="wybor" value="+1 Zrecznosc"/>
+            Zycie<?php echo $wynik[3]; ?><input type="submit"  name="wybor" value="+1 Zycie"/>
         </form>
     </body>
 </html>

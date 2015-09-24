@@ -28,9 +28,10 @@ class Wyborpostaci {
     }
    public function utwoz($imie){
        $db=bazadanych::getInstance();
-       $db->zapisz('postac',array('imie'=>$imie,'sila'=>1,'zrecznosc'=>1,'szybkosc'=>1,'zycie'=>1,'zloto'=>0,'dosw'=>0,'wygrane'=>0,'przegrane'=>0,'id_uzytkownika'=>$this->uzytkownik->getID())); 
+       $db->zapisz('postac',array('imie'=>$imie,'sila'=>1,'zrecznosc'=>1,'szybkosc'=>1,'zycie'=>1,'zloto'=>0,'dosw'=>0,'wygrane'=>0,'przegrane'=>0,'id_uzytkownika'=>$this->uzytkownik->getID()));
+       
    }
-
+    
  public function wybierz($id){
      $db=bazadanych::getInstance();
      $wynik=$db->select('postac',array('id'=>$id));

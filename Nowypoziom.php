@@ -20,11 +20,16 @@ class Nowypoziom {
     
     public function __construct($wiedzmin) {
         $this->wiedzmin=$wiedzmin;
+        
     }
    
     public function pobierz(){
         $db = bazadanych::getInstance();
         $wynik=$db->select('nowypoziom',array('id_postaci'=>$this->wiedzmin->getparam->getId()));
+        if($wynik == false){
+            return false;
+        }
+        
         return $wynik;
     }
     
@@ -38,6 +43,9 @@ class Nowypoziom {
         return $poziom;
     }
     public function punkty(){
+      if($this->pobierz()==false){
+          $this->zapisz();
+      }
       $wynik=$this->pobierz();
       $poziom=$wynik[0]['poziom'];
       $punkty=$wynik[0]['punkty'];
@@ -50,18 +58,26 @@ class Nowypoziom {
       if($zwiekszpoziom==1){
           $punkty+=2;
       }
-      $this->zapisz($punkty,$poziom);
+      $this->update($punkty,$poziom);
       if(!empty($punkty)){
-          return true;
+          return $punkty;
       }
     }
     
     
-    public function zapisz($punkty,$poziom){
+    public function update($punkty,$poziom){
         $db = bazadanych::getInstance();
         $db->update('nowypoziom',array('punkty'=>$punkty,'poziom'=>$poziom),array('id_postaci'=>$this->wiedzmin->getparam->getId()));
     }
     
+    public function zapisz(){
+        $db = bazadanych::getInstance();
+        $db->zapisz('nowypoziom',array('poziom'=>1,'punkty'=>0,'id_postaci'=>$this->wiedzmin->Getparam()->getId()));
+    }
     
+    public function setpoints($string){
+        $wynik=explode(" ",$string);
+        $this->wiedzmin->Getparam->set.$wynik[1]($this->wiedzmin->Getparam->get.$wynik[1]()+1);
+    }
     
 }

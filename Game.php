@@ -106,7 +106,16 @@ class Game extends request {
                }  
            }
            elseif($rodzaj=="nowypoziom"){
-               
+              $postac=$session->get('postac');
+              $nowypoziom=new Nowypoziom($postac);
+              $wynik=$postac->getParameters();
+              $session->setUp(array('punkty'=>$nowypoziom->punkty()));
+              $session->setUp(array('nowypoziom'=>$nowypoziom));
+              $session->setUp(array('wynik'=>$wynik));
+              if(isset($dane['wybor'])){
+                 $nowypoziom=$session->get('nowypoziom');
+                 $nowypoziom->setpoints($dane['wybor']);
+              }
            }
              //  if($rodzaj=='sklep'){
                   //  $postac=$session->get('postac');

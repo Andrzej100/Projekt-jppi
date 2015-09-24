@@ -40,12 +40,20 @@ class Parameters {
     
     
     
-    
+    public function getParameters(){
+        $param[]=$this->sila;
+        $param[]=$this->szybkosc;
+        $param[]=$this->zrecznosc;
+        $param[]=$this->zycie;
+        return $param;
+    }
     /**
      * Ustawia wartsośc parametru szybkość
      * @param type $value
      */
     public function setSzybkosc($value) {
+        $db = bazadanych::getInstance();
+        $db->update('postac',array('szybkosc'=>$value),array('id'=>$this->getId()));
         $this->szybkosc = $value;
     }
 
@@ -54,6 +62,8 @@ class Parameters {
      * @param type $value
      */
     public function setSila($value) {
+        $db = bazadanych::getInstance();
+        $db->update('postac',array('sila'=>$value),array('id'=>$this->getId()));
         $this->sila = $value;
     }
 
@@ -62,6 +72,8 @@ class Parameters {
      * @param type $value
      */
     public function setZrecznosc($value) {
+        $db = bazadanych::getInstance();
+        $db->update('postac',array('zrecznosc'=>$value),array('id'=>$this->getId()));
         $this->zrecznosc = $value;
     }
 
@@ -70,6 +82,8 @@ class Parameters {
      * @param type $value
      */
     public function setZycie($value) {
+        $db = bazadanych::getInstance();
+        $db->update('postac',array('zycie'=>$value),array('id'=>$this->getId()));
         $this->zycie = $value;
     }
 
