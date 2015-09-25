@@ -139,6 +139,8 @@ class Parameters {
         return $this->pktakcji;
     }
     public function setGold($gold){
+        $db = bazadanych::getInstance();
+        $db->update('postac',array('zloto'=>$value),array('id'=>$this->getId()));
         $this->gold=$gold;
     }
    public function setId($id){

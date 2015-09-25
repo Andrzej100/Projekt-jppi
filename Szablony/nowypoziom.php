@@ -18,5 +18,9 @@ and open the template in the editor.
             Zrecznosc<?php echo $wynik[2]; ?><input type="submit"  name="wybor" value="+1 Zrecznosc"/>
             Zycie<?php echo $wynik[3]; ?><input type="submit"  name="wybor" value="+1 Zycie"/>
         </form>
+         <form action="index.php?strona=przeciwnik" method="GET">
+             <input type="hidden" name="unset" value="nowypoziom">
+             <input type="submit"  name="cofnij" value="doprzeciwnika"/>
+         </form>
     </body>
 </html>

@@ -36,4 +36,37 @@ class Ladowanie {
         return false;
     }
     
-}
+
+    
+    
+    public static function laduj($wartosc,$dane){
+         $session = Sesja::getInstance();     
+              if($_GET['cofnij']){
+                  $session->delete($_GET['unset']);
+              }
+              $strona= $_GET['strona'];
+              $this->$strona.'('.$session.')';
+              if($wartosc==true){
+                  $this->$strona.'('.$session.','.$dane.')';
+              }           
+    } 
+    
+    public function przeciwnik($session,$dane=null){
+        $przeciwnik= new Przeciwnik();
+               $przeciwnicy=$przeciwnik->wszyscyprzeciwnicy();
+               $session->setUp(array('przeciwnik'=>$przeciwnik));
+               $session->setUp(array('wynik'=>$przeciwnicy));
+               if($dane!=null){
+                  $przeciwnik= $session->get('przeciwnik');
+                  $przeciwnik->wybranyprzeciwnik($dane['wybor']);
+                  $potwor= new Postac\Potwor($przeciwnik);
+                  $session->setUp(array('potwor'=>$potwor));
+               }
+    }
+        }
+
+
+
+
+
+    

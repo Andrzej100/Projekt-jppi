@@ -141,7 +141,7 @@ class Game extends request {
       
 
         $variable = array(
-            
+            'statystyki'=>$session->get('statystyki'),
             'sklep'=>$session->get('sklep'),
             'wynik2'=>$session->get('wynik2'),
             'wynik'=>$session->get('wynik'),
@@ -151,6 +151,7 @@ class Game extends request {
         );
     
         $szablon->szablon($variable);
+        
 //        if ($_GET['strona']=='rejestracja' && isset($_POST['submit'])) {
 //            echo"Czychcesz sie zarejestrować czy zalogować?";
 ////            $ladowanie = new ladowanie();
